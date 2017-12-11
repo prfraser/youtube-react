@@ -1,25 +1,24 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ListItem from './ListItem';
 import '../App.css';
 
-class VideoList extends Component {
-  constructor(props){
-    super(props)
-  }
+const VideoList = ({ videos, onVideoSelect }) => {
 
-  render() {
-    return (
-      <div className="VideoList">
-        {this.props.videos.map((video) =><ListItem 
-                                          key={video.snippet.title}
-                                          title={video.snippet.title}
-                                          video={video}
-                                          channelTitle={video.snippet.channelTitle}
-                                          thumbnail={video.snippet.thumbnails.default}
-                                          onVideoSelect={this.props.onVideoSelect}/>)}
-      </div>
-    );
-  }
-}
+  const listItem = videos.map((video) => {
+    return ( 
+      <ListItem key={video.snippet.title} title={video.snippet.title}
+        video={video}
+        channelTitle={video.snippet.channelTitle}
+        thumbnail={video.snippet.thumbnails.default}
+        onVideoSelect={onVideoSelect}/>
+      )
+  });
+  
+  return (
+    <div className="VideoList">
+      {listItem}
+    </div>
+  )
+};
 
 export default VideoList;

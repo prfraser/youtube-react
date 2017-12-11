@@ -1,14 +1,32 @@
 import React, { Component } from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
-import axios from 'axios';
+import YTSearch from 'youtube-api-search';
 import VideoList from './components/VideoList';
+import SearchBar from './components/SearchBar';
 import CurrentVideo from './components/CurrentVideo';
 import './App.css';
+
+const API_KEY = '';
 
 class App extends Component {
   state = {
     videos: [],
-    selectedVideo: null
+    selectedVideo: null,
+    searchTerm: ''
+  }
+
+  videoSearch(term) {
+    YTSearch({ key: API_KEY, term: term}, (videos) => {
+      this.setState({
+        videos: videos,
+        selectedVideo: videos[0]
+      });
+    });
+  }
+
+  handleSearchChange = (searchTerm) => {
+    this.setState({searchTerm})
+    this.videoSearch(this.state.searchTerm)
   }
 
   render() {
@@ -17,6 +35,9 @@ class App extends Component {
     }
     return (
       <Grid>
+        <Row>
+          <SearchBar searchTerm={this.state.searchTerm} onChange={this.handleSearchChange} />
+        </Row>
         <Row className="show-grid">
           <Col xs={12} md={8}>
             <CurrentVideo video={this.state.selectedVideo}/>
@@ -34,17 +55,7 @@ class App extends Component {
   }
 
   componentDidMount(){
-    axios.get('https://www.googleapis.com/youtube/v3/search?part=snippet&q=gaming&type=video&videoCaption=closedCaption&key=YOUR_API_KEY')
-      .then((response) => {
-        console.log(response.data.items)
-        this.setState({
-          videos: response.data.items,
-          selectedVideo: response.data.items[0]
-        })
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    this.videoSearch('gaming');
   }
 }
 
